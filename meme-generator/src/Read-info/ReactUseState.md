@@ -150,3 +150,116 @@ returns === new value of state
 
 3. When would you want to pass the second option (from answer above) to the state setter function?
    Whenever you DO need the previous value to determine the new value
+
+You can also instead use react useState by first calling differently then using it without React.useState
+import { useState } from 'react';
+function MyButton() {
+const [count, setCount] = useState(0);
+// ...
+}
+
+// create new state, memeImage, with a string link because an empty string here causs errors in console
+// const [memeImage, setMemeImage] = React.useState("http://i.imgflip.com/1bij.jpg")
+
+you can pass state as a prop, where child component in a different js containing props, like props.number, will be rendered to parent component as a state, like below in app.js parent example:
+function Parent(){
+
+   <!-- do stuff -->
+
+const[count, setCount] - React.useState(0)
+
+<!-- return. here count rendered will have state of 0 -->
+ <Child number={count}/> 
+}
+
+<!-- Raise state up a level to App.js  and pass it down to both the  Header and Body components through props. -->
+
+export default function Header() {
+const [user, setUser] = React.useState("Joe")
+return (
+
+<header>
+<p>Current user: {user}</p>
+</header>
+)
+}
+//we move the state to App.js to raise the state up a level:
+const [user, setUser] = React.useState("Joe"), then pass the props down to the children header and body
+export default function App() {
+const [user, setUser] = React.useState("Joe")
+return (
+<main>
+<Header user={user} />
+<Body user={user} />
+</main>
+)
+}
+
+export default function Body(props) {
+return (
+
+<section>
+<h1>Welcome back, {props.user}!</h1>
+</section>
+
+export default function Header(props) {
+return (
+
+<header>
+<p>Current user: {props.user}</p>
+</header>
+//this allows sharing of state among components. It is recommended to keep state on the component that needs it unless it is to be shared
+
+React.useEffect is used ith sideEffects that live outside of reacts view.eg, localStorage, AP/database, subscriptions with web sockets, syncing 2 different internal states
+
+UseEffect has one required parameter,a callback function where we put our side effects code, like a fetch request, and an optional parameter, called dependencies array, that contains array of dependencies/values which tells effect when to run again if any dependency changes. If no deps are provided, meaning an empty array,effect runs only once at mount time.
+
+below count is the number in use state and updates accordignly
+
+React.useEffect( function () {
+fetch('https://jsonplaceholder.typicode.com/todos')
+.then((response)=> response.json())
+.then((data)=>{})
+},[count])
+
+1. What is a "side effect" in React? What are some examples?
+
+- Any code that affects an outside system.
+- local storage, API, websockets, two states to keep in sync
+
+2. What is NOT a "side effect" in React? Examples?
+
+- Anything that React is in charge of.
+- Maintaining state, keeping the UI in sync with the data,
+  render DOM elements
+
+3. When does React run your useEffect function? When does it NOT run
+   the effect function?
+
+- As soon as the component loads (first render)
+- On every re-render of the component (assuming no dependencies array)
+- Will NOT run the effect when the values of the dependencies in the
+  array stay the same between renders
+
+4. How would you explain what the "dependecies array" is?
+
+- Second paramter to the useEffect function
+- A way for React to know whether it should re-run the effect function or not.
+
+<!-- useEffect takes a function as its parameter. If that function
+    returns something, it needs to be a cleanup function. Otherwise,
+    it should return nothing. If we make it an async function, it
+    automatically retuns a promise instead of a function or nothing.
+    Therefore, if you want to use async operations inside of useEffect,
+    you need to define the function separately inside of the callback
+    function, as seen below:
+    */ -->
+
+React.useEffect(() => {
+async function getMemes() {
+const res = await fetch("https://api.imgflip.com/get_memes")
+const data = await res.json()
+setAllMemes(data.data.memes)
+}
+getMemes()
+}, [])
